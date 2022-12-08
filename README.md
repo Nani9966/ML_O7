@@ -13,3 +13,9 @@ pip install -r requirements.txt
 ```bash
 python main.py
 ```
+
+####### step add data link
+
+````` bash
+from wget link a
+````
