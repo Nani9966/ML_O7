@@ -46,6 +46,12 @@
 #############to reset the comments  type this code in termonal
 git reset --soft 6afd
 
+git add .
+git status  ##shows all files in working directory
+git add ..
+git commit -m "Filles inserting in my github"
+
+git push origin main 
 
 
 
