@@ -5,7 +5,7 @@ import sys,os
 from sensor.entity import config_entity
 from sensor.entity.config_entity import DataIngestionConfig
 # from sensor.components.data_validation import data_validation
-# from sensor.components.data_ingestion import DataIngestion
+from sensor.components.data_ingestion import DataIngestion
 
 # from sensor.components.data_ingestion import DataIngestion
 
