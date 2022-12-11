@@ -53,7 +53,7 @@ class DataIngestion:
                 train_file_path=self.data_ingestion_config.train_file_path,
                 test_file_path=self.data_ingestion_config.test_file_path
                 )
-            logging.info(f"data ingestion artifact:"{Data_ingestion_artifact})
+            logging.info(f"data ingestion artifact:{Data_ingestion_artifact}")
             return Data_ingestion_artifact
                 
 
