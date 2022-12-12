@@ -18,8 +18,8 @@ if __name__ == "__main__":
     
 
 
-    git add .
-    git commit -m "add"
-    git config --global user.email "chinnareddy2106@gmail.com"
-    git config --global user.name "chinnareddy"
-    
+    # git add .
+    # git commit -m "add"
+    # git config --global user.email "chinnareddy2106@gmail.com"
+    # git config --global user.name "chinnareddy"
+
