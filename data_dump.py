@@ -16,3 +16,10 @@ if __name__ == "__main__":
 
     client[DATABASE_NAME][COLLECTION_NAME].insert_many(json_record)
     
+
+
+    git add .
+    git commit -m "add"
+    git config --global user.email "chinnareddy2106@gmail.com"
+    git config --global user.name "chinnareddy"
+    
