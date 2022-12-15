@@ -47,3 +47,6 @@ def convert_columns_float(df:pd.DataFrame,exclude_columns:list)->pd.DataFrame:
         return df
     except Exception as e:
         raise e
+
+def target_column_encoding(target_feature):
+    target_feature.replace()

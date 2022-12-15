@@ -2,7 +2,12 @@ import os ,sys
 from sensor.exception import SensorException
 from sensor.logger import logging
 from datetime import datetime
-
+FILE_NAME="sensor.csv"
+TRAIN_FILE_NAME="train.csv"
+TEST_FILE_NAME="test.csv"
+TRANSFORMER_OBJECT_FILE_NAME="transformer.pkl"
+TARGET_ENCODER_OBJECT_FILE_NAME="target_encoder.pkl"
+MODEL_FILE_NAME="model.pkl"
 
 
 FILE_NAME="sensor.csv"
@@ -49,10 +54,10 @@ class DataTransformConfig:
 
     def __init__(self ,training_pipeline_config:TrainingPipelineConfig):
         self.data_transformation_dir=os.path.join(training_pipeline_config.artifact_dir,"data_transformation")
-        self.transform_object_path=os.path.join(self.data_transformation_dir,"transformer","transform.pkl")
+        self.transform_object_path=os.path.join(self.data_transformation_dir,"transformer",TRANSFORMER_OBJECT_FILE_NAME)
         self.transformed_train_path=os.path.join(self.data_transformation_dir,"transformed",TRAIN_FILE_NAME)
         self.transformed_test_path=os.path.join(self.data_transformation_dir,"transformed",TEST_FILE_NAME)
-
+        self.target_enconder_path =os.pat.join(self.data_transformation_dir,"traget_encoder",TARGET_ENCODER_OBJECT_FILE_NAME)
 
 
 
