@@ -5,6 +5,7 @@ from sensor.config import mongo_client
 import os,sys
 import yaml
 import dill
+import numpy as np
  
 def get_collection_as_dataframe(database_name:str,collection_name:str)->pd.DataFrame:
 
@@ -66,9 +67,9 @@ def save_object(file_path:str,obj:object)-> None:
 def load_object(file_path:str,)-> object:
     try:
         if not os.path.exists(file_path):
-            raise Exception (f:"The file : {file_path} is not exists")
+            raise Exception (f"The file : {file_path} is not exists")
         with open(file_path,"rb") as file_obj:
-            return.dill(obj,file_obj)
+            return dill.load(file_obj)
     except Exception as e:
             raise SensorException(e,sys) from e
 

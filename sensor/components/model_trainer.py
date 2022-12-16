@@ -1,22 +1,25 @@
 from sensor.entity import artifact_entity,config_entity
-from sensor.exception import  SensorException
+from sensor.exception import SensorException
 from sensor.logger import logging
-import os ,sys
 from typing import Optional
+import os,sys 
 from xgboost import XGBClassifier
-from sensor import utils 
+from sensor import utils
 from sklearn.metrics import f1_score
 
 
 
 
+
 class ModelTrainer:
-    def __init__(self,model_trainer_config:config_entity.ModdelTrainerConfig,
+    def __init__(self,model_trainer_config:config_entity.ModelTrainerConfig,
                 data_transformation_artifact:artifact_entity.DataTransformationArtifact
                 ):
         try :
-            #Wite code for Grid Search CV   ################################assignment
-            pass
+            logging.info(f"{'>>'*20} Model Trainer {'<<'*20}")
+            self.model_trainer_config =model_trainer_config 
+            self.data_transformation_artifact=data_transformation_artifact
+            
 
         except  Exception as e:
             raise SensorException( e,sys)
@@ -40,25 +43,24 @@ class ModelTrainer:
 
 
 
-    @property
 
-    def model(self)
-    def initiate_model_tariner(self,)->artifact_entity.ModelTrainerArtifact:
+
+    def initiate_model_trainer(self,)->artifact_entity.ModelTrainerArtifact:
         try:
             logging.info(f"Loading train and test array.")
             train_arr=utils.load_numpy_array_data(file_path=self.data_transformation_artifact.transformed_train_path)
             test_arr=utils.load_numpy_array_data(file_path=self.data_transformation_artifact.transformed_test_path)
 
             logging.info(f"splittng input and target feature from both train and test arr.")
-            x_tarin,y_train=train_arr[:,:,-1],train_arr[:,-1]
-            x_test,y_test=test_arr[:,:,-1],test_arr[:,-1]
+            x_train,y_train=train_arr[:,:-1],train_arr[:,-1]
+            x_test,y_test=test_arr[:,:-1],test_arr[:,-1]
 
             logging.info(f"Train the model")
-            model= train_model(x=x_train,y=y_train)
+            model= self.train_model(x=x_train,y=y_train)
 
 
             logging.info(f"calculating f1 train score")
-            yhat_train=model.prdict(x_tarin)
+            yhat_train=model.prdict(x_train)
             f1_train_score=f1_score(y_true=y_train,y_pred=yhat_train)
 
 
@@ -66,7 +68,7 @@ class ModelTrainer:
             yhat_test=model.predict(x_test)
             f1_test_score=f1_score(y_true=y_test,y_pred=yhat_test)
 
-            logging.info(f"tarin score : {f1_train_score} and test score {f1_test_score}")
+            logging.info(f"train score : {f1_train_score} and test score {f1_test_score}")
             #check for overfitting or underfitting or excepted score
             logging.info(f"Checking if our model is underfitted  or not")
             if f1_test_score<self.model_trainer_config.excepted_score:
@@ -77,19 +79,19 @@ class ModelTrainer:
             logging.info(f"Checking if our model is overfitted or not")
             diff = abs(f1_train_score -f1_test_score)
 
-            if diff >self.model_trainer_config.overfitting_thershold:
-                raise Exception(f"Train and test score diff :{diff} is more than overfitting thershold {self.model_trainer_config.overfitting_thershold}")
+            if diff >self.model_trainer_config.overfitting_threshold:
+                raise Exception(f"Train and test score diff :{diff} is more than overfitting threshold {self.model_trainer_config.overfitting_threshold}")
 
             #save the trained model
             logging.info(f"Saving mode obeject")
-            utils.save_object(file_path=self.initiate_model_tariner.model_path, obj=model)
+            utils.save_object(file_path=self.model_trainer_config.model_path, obj=model)
 
 
             #prepare artifact
             model_trainer_artifact= artifact_entity.ModelTrainerArtifact(model_path=self.model_trainer_config.model_path,
             f1_train_score=f1_train_score, f1_test_score=f1_test_score)
-            logging.info(f"model trainer artifact :{model_tariner_artifact}")
-            return model_tariner_artifact
+            logging.info(f"model trainer artifact :{model_trainer_artifact}")
+            return model_trainer_artifact
 
         except Exception as e:
             raise SensorException(e,sys)
