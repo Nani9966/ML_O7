@@ -62,11 +62,58 @@ class DataTransformation:
             label_encoder =LabelEncoder()
             label_encoder.fit(target_feature_test_df)
 
-            label_encoder.transform(target_feature_train_df)
-            label_encoder.transform(target_feature_test_df)
+            #transformation  on target features
+            target_feature_train_arr=label_encoder.transform(target_feature_train_df)
+            target_feature_test_arr=label_encoder.transform(target_feature_test_df)
 
+            transformation_pipeline= DataTransformation.get_data_tranformer_object()
+            transformation_pipeline.fit(input_feature_train_df)
+
+            input_feature_train_arr=transformation_pipeline.transform(input_feature_train_df)
+            input_feature_test_arr=transformation_pipeline.transform(input_feature_test_df)
+
+            smt =SMOTETomek(sampling_strategy = "miniorty")
+            logging.info(f"Before sampling in tarining set input : {input_feature_train_arr.shape} Target:{target_feature_train_arr.shape} ")
+            input_feature_train_arr,target_feature_train_arr= smt.fit_resample(input_feature_train_arr,target_feature_train_arr)
+            logging.info(f"After sampling in tarining set input : {input_feature_train_arr.shape} Target:{target_feature_train_arr.shape} ")
+
+            logging.info(f"Before sampling in tarining set input : {input_feature_test_arr.shape} Target:{target_feature_test_arr.shape} ")
+            input_feature_test_arr,input_feature_test_arr= smt.fit_resample(input_feature_test_arr,target_feature_test_arr)
+            logging.info(f"After sampling in tarining set input : {input_feature_test_arr.shape} Target:{target_feature_test_arr.shape} ")
+
+            #target encoder
+
+            tarin_arr = np.c_[input_feature_train_arr,target_feature_train_arr]
+            test_arr = np.c_[input_feature_test_arr,target_feature_test_arr]
+
+
+            #save numpy array
+            utils.save_numpy_array_data(file_path=self.data_transformation_config.transformed_train_path ,
+                                         array=tarin_arr)
+
+            utils.save_numpy_array_data(file_path=self.data_transformation_config.transformed_test_path ,
+                                         array=test_arr)
+
+
+            utils.save_object(file_path=self.data_transformation_config.transform_object_path,
+                             obj=transformation_pipeline)
+
+            utils.save_object(file_path = self.data_transformation_config.target_enconder_path,
+                            obj=label_encoder)
+
+            data_transformation_artifact= artifact_entity.DataTransformationArtifact(
+                transform_object_path=self.data_transformation_config.transform_object_path,
+                transformed_train_path=self.data_transformation_config.transformed_train_path,
+                transformed_test_path=self.data_transformation_config.transformed_test_path,
+                target_encoder_path=self.data_transformation_config.target_enconder_path) 
+
+
+
+            logging.info(f"Data transformation object {data_transformation_artifact} ") 
+            return data_transformation_artifact             
         except Exception as e:
             raise SensorException(e,sys)
 
 
-    )
+
+    
