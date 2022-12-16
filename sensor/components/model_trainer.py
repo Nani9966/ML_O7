@@ -1,0 +1,96 @@
+from sensor.entity import artifact_entity,config_entity
+from sensor.exception import  SensorException
+from sensor.logger import logging
+import os ,sys
+from typing import Optional
+from xgboost import XGBClassifier
+from sensor import utils 
+from sklearn.metrics import f1_score
+
+
+
+
+class ModelTrainer:
+    def __init__(self,model_trainer_config:config_entity.ModdelTrainerConfig,
+                data_transformation_artifact:artifact_entity.DataTransformationArtifact
+                ):
+        try :
+            #Wite code for Grid Search CV   ################################assignment
+            pass
+
+        except  Exception as e:
+            raise SensorException( e,sys)
+
+    def fine_tune(self):
+        try:
+            pass
+        except Exception as e:
+            raise SensorException(e, sys)
+
+
+    def train_model(self,x,y):
+        try:
+
+            xgb_clf=XGBClassifier()
+            xgb_clf.fit(x,y)
+            return xgb_clf
+        except Exception  as e:
+            raise SensorException(e ,sys)
+
+
+
+
+    @property
+
+    def model(self)
+    def initiate_model_tariner(self,)->artifact_entity.ModelTrainerArtifact:
+        try:
+            logging.info(f"Loading train and test array.")
+            train_arr=utils.load_numpy_array_data(file_path=self.data_transformation_artifact.transformed_train_path)
+            test_arr=utils.load_numpy_array_data(file_path=self.data_transformation_artifact.transformed_test_path)
+
+            logging.info(f"splittng input and target feature from both train and test arr.")
+            x_tarin,y_train=train_arr[:,:,-1],train_arr[:,-1]
+            x_test,y_test=test_arr[:,:,-1],test_arr[:,-1]
+
+            logging.info(f"Train the model")
+            model= train_model(x=x_train,y=y_train)
+
+
+            logging.info(f"calculating f1 train score")
+            yhat_train=model.prdict(x_tarin)
+            f1_train_score=f1_score(y_true=y_train,y_pred=yhat_train)
+
+
+            logging.info(f"calculate f1_test_score")
+            yhat_test=model.predict(x_test)
+            f1_test_score=f1_score(y_true=y_test,y_pred=yhat_test)
+
+            logging.info(f"tarin score : {f1_train_score} and test score {f1_test_score}")
+            #check for overfitting or underfitting or excepted score
+            logging.info(f"Checking if our model is underfitted  or not")
+            if f1_test_score<self.model_trainer_config.excepted_score:
+                raise Exception (f"model is not good as it is not able to give \
+                execption accuracy : { self.model_trainer_config.excepted_score}:model actual score :{f1_test_score}")
+            
+
+            logging.info(f"Checking if our model is overfitted or not")
+            diff = abs(f1_train_score -f1_test_score)
+
+            if diff >self.model_trainer_config.overfitting_thershold:
+                raise Exception(f"Train and test score diff :{diff} is more than overfitting thershold {self.model_trainer_config.overfitting_thershold}")
+
+            #save the trained model
+            logging.info(f"Saving mode obeject")
+            utils.save_object(file_path=self.initiate_model_tariner.model_path, obj=model)
+
+
+            #prepare artifact
+            model_trainer_artifact= artifact_entity.ModelTrainerArtifact(model_path=self.model_trainer_config.model_path,
+            f1_train_score=f1_train_score, f1_test_score=f1_test_score)
+            logging.info(f"model trainer artifact :{model_tariner_artifact}")
+            return model_tariner_artifact
+
+        except Exception as e:
+            raise SensorException(e,sys)
+
