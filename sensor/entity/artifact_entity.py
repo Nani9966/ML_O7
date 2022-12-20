@@ -33,6 +33,8 @@ class ModelTrainerArtifact:
     
 
 
-class ModelEvaluationArtifact:...
+class ModelEvaluationArtifact:
+    is_model_accepted:bool
+    imporved_accuracy:float
 class ModelPusherArtifact:...
 
