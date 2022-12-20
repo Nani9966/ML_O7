@@ -71,9 +71,9 @@ class ModelTrainer:
             logging.info(f"train score : {f1_train_score} and test score {f1_test_score}")
             #check for overfitting or underfitting or excepted score
             logging.info(f"Checking if our model is underfitted  or not")
-            if f1_test_score<self.model_trainer_config.excepted_score:
+            if f1_test_score<self.model_trainer_config.expected_score:
                 raise Exception (f"model is not good as it is not able to give \
-                execption accuracy : { self.model_trainer_config.excepted_score}:model actual score :{f1_test_score}")
+                execption accuracy : { self.model_trainer_config.expected_score}:model actual score :{f1_test_score}")
             
 
             logging.info(f"Checking if our model is overfitted or not")
