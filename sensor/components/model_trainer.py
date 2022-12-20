@@ -60,7 +60,7 @@ class ModelTrainer:
 
 
             logging.info(f"calculating f1 train score")
-            yhat_train=model.prdict(x_train)
+            yhat_train=model.predict(x_train)
             f1_train_score=f1_score(y_true=y_train,y_pred=yhat_train)
 
 

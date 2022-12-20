@@ -24,14 +24,14 @@ class DataTransformation:
                       data_ingestion_artifact:artifact_entity.DataIngestionArtifact):
                    
 
-            try:
-                logging.info(f"{'>>'*20} Data Transformation {'<<'*20}")
-                self.data_transformation_config=data_transformation_config
-                self.data_ingestion_artifact=data_ingestion_artifact
+        try:
+            logging.info(f"{'>>'*20} Data Transformation {'<<'*20}")
+            self.data_transformation_config=data_transformation_config
+            self.data_ingestion_artifact=data_ingestion_artifact
 
 
-            except Exception as e:
-                raise SensorException(e,sys)
+        except Exception as e:
+            raise SensorException(e,sys)
 
     @classmethod
     def get_data_transformer_object(cls)->Pipeline:
@@ -39,7 +39,7 @@ class DataTransformation:
             simple_imputer=SimpleImputer(strategy="constant",fill_value=0)
             robust_scaler=RobustScaler()
 
-            constant_pipeline=Pipeline(steps=[('Imputer',simple_imputer),('RobustScaler',robust_scaler)])
+            pipeline=Pipeline(steps=[('Imputer',simple_imputer),('RobustScaler',robust_scaler)])
             return pipeline
 
         except Exception as e:
@@ -88,14 +88,15 @@ class DataTransformation:
                                                                                                                                
                                                                                                                                          
 
-            smt =SMOTETomek(sampling_strategy = "miniorty")
-            logging.info(f"Before sampling in tarining set input : {input_feature_train_arr.shape} Target:{target_feature_train_arr.shape} ")
-            input_feature_train_arr,target_feature_train_arr= smt.fit_resample(input_feature_train_arr,target_feature_train_arr)
-            logging.info(f"After sampling in tarining set input : {input_feature_train_arr.shape} Target:{target_feature_train_arr.shape} ")
+            smt = SMOTETomek(random_state=42)
+            logging.info(f"Before resampling in training set Input: {input_feature_train_arr.shape} Target:{target_feature_train_arr.shape}")
+            input_feature_train_arr, target_feature_train_arr = smt.fit_resample(input_feature_train_arr, target_feature_train_arr)
+            logging.info(f"After resampling in training set Input: {input_feature_train_arr.shape} Target:{target_feature_train_arr.shape}")
+            
+            logging.info(f"Before resampling in testing set Input: {input_feature_test_arr.shape} Target:{target_feature_test_arr.shape}")
+            input_feature_test_arr, target_feature_test_arr = smt.fit_resample(input_feature_test_arr, target_feature_test_arr)
+            logging.info(f"After resampling in testing set Input: {input_feature_test_arr.shape} Target:{target_feature_test_arr.shape}")
 
-            logging.info(f"Before sampling in tarining set input : {input_feature_test_arr.shape} Target:{target_feature_test_arr.shape} ")
-            input_feature_test_arr,target_feature_test_arr= smt.fit_resample(input_feature_test_arr,target_feature_test_arr)
-            logging.info(f"After sampling in tarining set input : {input_feature_test_arr.shape} Target:{target_feature_test_arr.shape} ")
 
             #target encoder
 

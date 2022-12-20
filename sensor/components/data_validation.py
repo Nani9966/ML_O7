@@ -45,7 +45,7 @@ class DataValidation:
             drop_column_names=null_report[null_report>threshold].index
 
             logging.info(f"Columns to drop: {list(drop_column_names)}")
-            self.validation_error[report_key_name]=drop_column_names
+            self.validation_error[report_key_name]=list(drop_column_names)
             df.drop(list(drop_column_names),axis=1,inplace =True)
 
             #return None no columns left
