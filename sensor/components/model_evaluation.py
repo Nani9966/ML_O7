@@ -3,6 +3,10 @@ from sensor.entity import config_entity,artifact_entity
 from sensor.exception import SensorException
 from sensor.logger import logging
 import os,sys
+from sensor.utils import load_object
+from sklearn.metrics import f1_score 
+import pandas as pd  
+from sensor.config import TARGET_COLUMN 
 
 
 class ModelEvaluation:
@@ -27,13 +31,65 @@ class ModelEvaluation:
             
             ##if saved model folder has model the we will compare
             #which model is best trained or the mdoel from saved model folder
+            looging.info("if saved model folder has model the will compare 
+            which model is best trained or the model from saved model folder")
             latest_dir_path=self.model_resolver.get_latest_dir_path()
             if latest_dir_path == None:
                 model_eval_artifact=artifact_entity.ModelEvaluationArtifact(is_model_accepted=True,
                 imporved_accuracy=None)
                 logging.info(f"Model evaluation artifact :{model}")
-
                 return  model_eval_artifact
+
+            ##finding loacation of transformer ,model,target_encoder
+            logging.info("finding loacation of transformer ,model,target_encoder")
+            transformer_path = self.model_resolver.get_latest_transformer()
+            model_path=self.model_resolver.get_latest_model_path()
+            target_encoder_path=self.model_resolver.get_latest_encoder_path()
+
+            logging.info("Previous trained objects of transformers ,model and target encoder")
+            #Previous trained objects
+
+            transformer =load_object(file_path = transformer_path )
+            model = load_object(file_path = model_path)
+            target_encoder = load_object(file_path =target)
+
+            logging.info("currently trained model objects" )
+            ##currently trained model objects
+            current_transformer = load_object(file_path=self.data_transformation_artifact.transform_object_path)
+            current_model = load_object(file_path = self.model_trainer_artifact.model_path)
+            currnet_target_encoder=load_object(file_path = self.data_transformation_artifact.target_encoder_path )
+
+            test_df=pd.read_csv(self.data_ingestion_artifact.test_file_path)
+            target_df=test_df[TARGET_COLUMN]
+            y_true=target_encoder.transform(target_df)
+
+            ## accuracy using previous trained model
+            
+            input_arr=transformer.transform(test_df)
+            y_pred=model.predict(input_arr)
+            print(f"Prediction using previous model:{target_encoder.inverse_transform(y_pred[:5])}")
+            previous_model_score= f1_score(y_true=y_true,y_pred=y_pred)
+            logging.info(f"accuracy using previous trained model : {previous_model_score}")
+
+
+
+            #accuracy using current trained model
+            
+            input_arr = current_transformer.transform(test_df)
+            y_pred=current_model.predict(input_arr)
+            y_true=current_target_encoder.transform(target_df)
+            print(f"Prediction using current model:{current_encoder.inverse_transform(y_pred[:5])}")
+            current_model_score= f1_score(y_true=y_true,y_pred=y_pred)
+            logging.info("accuracy using current trained model :{current_model_score}")
+
+            if current_model_score<previous_model_score:
+                logging.info("Current trained model is not better than previous model")    
+                raise Exception(f"Current trained model is not better than previous model:{current_model_score}") 
+
+            model_eval_artifact =artifact_entity.Model_EvaluationArtifact(is_model_accepted =True,
+            imporved_accuarcy = current_model_score-Previous_model_score)   
+            logging.info(f"Model eval artifact:{model_eval_artifact}")  
+            return  model_eval_artifact
 
         except Exception as e:
             raise SensorException(e,sys)

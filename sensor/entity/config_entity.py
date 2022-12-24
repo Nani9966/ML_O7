@@ -61,4 +61,12 @@ class ModelEvaluationConfig:
     def __init__(self,training_pipeline_config_entity:TrainingPipelineConfig):
         self.change_thershold=0.01
 
-class ModelPusherConfig:...
+class ModelPusherConfig:
+    def __init__(self,training_pipeline_config_entity:TrainingPipelineConfig):
+        self.model_pusher_dir = os.path.join(training_pipeline_config.artifact_dir,"model_pusher")
+        self.saved_model_dir=os.path.join("saved_models")
+        self.pusher_model_dir = os.path.join(self.model_pusher_dir,"saved_models")
+        self.pusher_model_path=os.path.join(self.model_pusher_dir,MODEL_FILE_NAME)
+        self.pusher_transformer_path=os.path.join(self.model_pusher_dir,TRANSFORMER_OBJECT_FILE_NAME)
+        self.pusher_target_encoder_path=os.path.join(self.model_pusher_dir,TARGET_ENCODER_OBJECT_FILE_NAME)
+
