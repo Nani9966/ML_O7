@@ -18,7 +18,7 @@ jobs:
    - name: Checkout Code
      uses: actions/checkout@v3
    - name: Install Utilites
-     run:
+     run: |
       sudo apt-get update
       sudo apt-get install -y jq unzip
 
@@ -42,7 +42,8 @@ jobs:
       ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
       ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY_NAME }}
       IMAGE_TAG: latest
-     run:
+     run: |
+
        # Build a docker container and 
        #push it to ECR so that it can
       #be deployed to ECS 
@@ -65,7 +66,7 @@ Continuous-Deployment:
       aws-region: ${{ secrets.AWS_REGION }}
 
    - name: Install Utilites
-     run:
+     run: |
       sudo apt-get update
       sudo apt-get install -y jq unzip
 
