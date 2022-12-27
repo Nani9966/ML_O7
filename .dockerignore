@@ -8,8 +8,9 @@ saved_models
 batch_prediction.py
 data_dump.py
 main.py
-README.md 
-revision.pdf
-test.ipynd
+README.md
+revision.pdf 
+test.ipynb
 train.py
+
 
